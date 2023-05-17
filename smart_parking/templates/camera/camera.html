@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load pybo_filter %}
+{% block content %}
+
+<div class="text-center my-5">
+    <h1>videos...</h1>
+</div>
+    <table class="d-flex justify-content-center">
+            <tr>
+                <td>
+                    <img
+                        src="http://192.168.0.231:9000/CameraIO/"
+                        style="width: 500px; height: 500px"
+                    alt="주차장 입구"/>
+                </td>
+                <td>
+                    <img
+                        src="http://192.168.0.231:8000/CameraParking/"
+                        style="width: 500px; height: 500px"
+                     alt="주차장 내부"/>
+                </td>
+
+            </tr>
+        </table>
+
+{% endblock %}
