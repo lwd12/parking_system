@@ -1,0 +1,48 @@
+<!-- 네비게이션바 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'pybo:index' %}">Parking</a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        {% if username %}
+                        <li class="nav-item">
+                            <a class="nav-link" style="font-weight:900" href="{% url 'common:logout' %}">{{ username }}(로그아웃)</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" style="font-weight:900" href="{% url 'camera:camera' %}">CCTV 영상</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" style="font-weight:900" href="{% url 'parking_lot:parking' %}">주차장 현황</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" style="font-weight:900" href="{% url 'log:index' %}">입출자 기록</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" style="font-weight:900" href="{% url 'visitor:visitor' %}">비등록/방문자 기록</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" style="font-weight:900" href="{% url 'warning:warning' %}">사고 기록</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" style="font-weight:900" href="{% url 'residents:residents' %}">입주자 정보</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" style="font-weight:900" href="{% url 'common:login' %}">로그인</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" style="font-weight:900" href="{% url 'common:signup' %}">회원가입</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+        </div>
+    </div>
+</nav>
