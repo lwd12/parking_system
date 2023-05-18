@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 메인 화면 가기 -->
+    <ImageButton
+        android:id="@+id/homeBT2"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        app:srcCompat="@drawable/back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/JuchaIm"
+        android:layout_width="325dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="84dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ju2"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/JuchaMain"
+        android:layout_width="410dp"
+        android:layout_height="645dp"
+        app:srcCompat="@drawable/jc"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/JuchaIm" />
+
+
+    <!-- 자리 없음-->
+    <ImageButton
+        android:id="@+id/JARIIT1"
+        android:layout_width="227dp"
+        android:layout_height="123dp"
+        app:srcCompat="@drawable/onjari"
+        app:layout_constraintStart_toStartOf="@id/JuchaMain"
+        app:layout_constraintTop_toTopOf="@id/JuchaMain"
+        android:visibility="invisible"/>
+        />
+
+    <ImageButton
+        android:id="@+id/JARIIT2"
+        android:layout_width="227dp"
+        android:layout_height="123dp"
+
+        android:layout_marginTop="47dp"
+        app:layout_constraintStart_toStartOf="@id/JuchaMain"
+        app:layout_constraintTop_toBottomOf="@id/JARIIT1"
+        app:srcCompat="@drawable/onjari"
+        android:visibility="invisible"/>
+        />
+
+    <ImageButton
+        android:id="@+id/JARIIT3"
+        android:layout_width="227dp"
+        android:layout_height="123dp"
+        android:layout_marginTop="49dp"
+        app:layout_constraintStart_toStartOf="@id/JuchaMain"
+        app:layout_constraintTop_toBottomOf="@id/JARIIT2"
+        app:srcCompat="@drawable/onjari"
+        android:visibility="invisible"/>
+        />
+
+
+    <!-- 내차 주차 -->
+    <ImageView
+        android:id="@+id/MECAR1"
+        android:layout_width="227dp"
+        android:layout_height="123dp"
+        app:srcCompat="@drawable/mycar"
+        tools:ignore="ContentDescription,MissingConstraints"
+        app:layout_constraintStart_toStartOf="@id/JuchaMain"
+        app:layout_constraintTop_toTopOf="@id/JuchaMain"
+        android:visibility="invisible"
+        />
+
+
+    <ImageView
+        android:id="@+id/MECAR2"
+        android:layout_width="227dp"
+        android:layout_height="123dp"
+        app:srcCompat="@drawable/mycar"
+        android:layout_marginTop="47dp"
+        app:layout_constraintStart_toStartOf="@id/JuchaMain"
+        app:layout_constraintTop_toBottomOf="@id/JARIIT1"
+        tools:ignore="ContentDescription,MissingConstraints"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/MECAR3"
+        android:layout_width="227dp"
+        android:layout_height="123dp"
+        android:layout_marginTop="56dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@id/JuchaMain"
+        app:layout_constraintTop_toBottomOf="@id/JARIIT2"
+        app:srcCompat="@drawable/mycar"
+        tools:ignore="ContentDescription,MissingConstraints" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
