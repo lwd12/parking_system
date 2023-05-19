@@ -1,3 +1,5 @@
+"""5/19 : 주차 상태에 따라 서버로 보내는 값 수정"""
+
 # 필요 라이브러리
 # 라즈베리파이 포트 및 LED
 import RPi.GPIO as GPIO  # OLED
@@ -8,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 import threading  # Thread
 import json
 import requests
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, jsonify
 from Cam_tess import *
 import cv2
 
@@ -46,7 +48,7 @@ def base_set():
     CarNum = ""
     parktrue = {}
     # 초음파 기준 거리
-    refer_distance = 3
+    refer_distance = 7
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
@@ -79,6 +81,7 @@ class parking_module(threading.Thread):
 
     def run(self):
         global user_select
+        global Select_Point
         onoff = False
 
         while True:
@@ -104,7 +107,7 @@ class parking_module(threading.Thread):
                         self.body["parking_seatstate"] = False
                     # print(self.bef_state)
                 time.sleep(1)
-            else:
+            elif user_select and Select_Point == self.point:
                 self.dis_check()
                 if self.car:
                     user_select = False
@@ -156,7 +159,7 @@ class parking_module(threading.Thread):
         while GPIO.input(self.echo) == 1:
             stop = time.time()
         check = stop - start
-        print(check * 34300 / 2)
+        # print(self.point + " : " + str(check * 34300 / 2))
         return check * 34300 / 2
 
 
@@ -233,6 +236,7 @@ class parking_guidance(threading.Thread):
         pitem = self.parking_lot.get("pitem")
         sel_parking = pitem.get(Sel_Point)
         led_set = list(self.parking_lot.get("litem").values())
+        print(sel_parking.get("lednum"))
         while user_select:
             for num in range(0, int(sel_parking.get("lednum"))):
                 GPIO.output(led_set[num], True)
@@ -289,6 +293,7 @@ def user_parking():
     global user_select
     select = request.args.get("locate", "error")
     pitem = Parking_lot_Data.get("pitem")
+    print(select)
     for item in pitem:
         if select == item:
             Select_Point = select
@@ -296,9 +301,11 @@ def user_parking():
                 if parktrue[Select_Point] == True:
                     print("Already Parking")
                     return "Already Parking"
+                else:
+                    user_select = True
+                    return "Parking to " + Select_Point
             except:
                 return "It is a place that does not exist."
-            user_select = True
 
 
 # 주차장 내 CCTV
@@ -311,10 +318,11 @@ def video_stream():
             success, frame = camera.read()
             if not success:
                 print("breaking")
-                time.sleep(2)
-                break
+                time.sleep(0.1)
+                continue
             else:
                 ret, buffer = cv2.imencode(".jpg", frame)
+                cv2.imwrite("./cap02.jpg", frame)
                 frame = buffer.tobytes()
                 yield (
                     b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n"
@@ -323,7 +331,7 @@ def video_stream():
         print("breakk")
 
 
-@app.route("/cctv_video")
+@app.route("/video_feed")
 def video_feed():
     return Response(
         video_stream(), mimetype="multipart/x-mixed-replace; boundary=frame"
@@ -368,6 +376,12 @@ if __name__ == "__main__":
     server.start()
     cam.start()
 
+    time.sleep(10)
+
+    A1.state_change = False
+    B1.state_change = False
+    C1.state_change = False
+
     while True:
         if Emergency:
             print(
@@ -379,29 +393,46 @@ if __name__ == "__main__":
                 "safetyaccident_datetime": time.strftime(
                     "%Y-%m-%dT%H:%M:%S+09:00", time.localtime(time.time())
                 ),
-                "safetyaccident_kind": "주차장 내 화재 발생",
+                "safetyaccident_kind": "화재 감지",
             }
             send_api(url_host, "/safetyaccident/", "POST", emergency_body)
             break
 
         if A1.state_change:
-            color_img = cv2.imread("./cap02.jpg", cv2.IMREAD_COLOR)
-            numdata = carnum_output(color_img)
-            A1.body["parking_seatcarnumber"] = numdata.get("A-1")
+            print("A1 state change")
+            # 각 자리 차량의 유무에 따라 차 번호 시트 값이 변화
+            if A1.car:
+                color_img = cv2.imread("./cap02.jpg", cv2.IMREAD_COLOR)
+                numdata = carnum_output(color_img)
+                A1.body["parking_seatcarnumber"] = numdata.get("A-1")
+            else:
+                A1.body["pakring_seatcarnumber"] = "None"
             # print(A1.body)
+
             send_api(url_host, locate + str(A1.seatnumber), "PUT", A1.body)
             A1.state_change = False
         if B1.state_change:
-            color_img = cv2.imread("./cap02.jpg", cv2.IMREAD_COLOR)
-            numdata = carnum_output(color_img)
-            B1.body["parking_seatcarnumber"] = numdata.get("B-1")
-            print(B1.body)
+            print("B1 state change")
+            if B1.car:
+                color_img = cv2.imread("./cap02.jpg", cv2.IMREAD_COLOR)
+                numdata = carnum_output(color_img)
+                B1.body["parking_seatcarnumber"] = numdata.get("B-1")
+            else:
+                B1.body["pakring_seatcarnumber"] = "None"
+
+            # print(B1.body)
+
             send_api(url_host, locate + str(B1.seatnumber), "PUT", B1.body)
             B1.state_change = False
         if C1.state_change:
-            color_img = cv2.imread("./cap02.jpg", cv2.IMREAD_COLOR)
-            numdata = carnum_output(color_img)
-            C1.body["parking_seatcarnumber"] = numdata.get("C-1")
+            print("C1 state change")
+            if C1.car:
+                color_img = cv2.imread("./cap02.jpg", cv2.IMREAD_COLOR)
+                numdata = carnum_output(color_img)
+                C1.body["parking_seatcarnumber"] = numdata.get("C-1")
+            else:
+                C1.body["pakring_seatcarnumber"] = "None"
+
             send_api(url_host, locate + str(C1.seatnumber), "PUT", C1.body)
             C1.state_change = False
 
